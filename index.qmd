@@ -14,6 +14,7 @@ execute:
 library(tidyverse)
 library(sf)
 library(scales)
+library(knitr)
 
 # Read clean Florida demographic and boundary data created by download_data.R
 fl_census <- readRDS("data/fl_census.rds")
@@ -27,11 +28,11 @@ fl_census <- readRDS("data/fl_census.rds")
 
 # Create choropleth map of Florida counties
 ggplot(fl_census) +
-  # Draw county polygons filled by Hispanic percentage with thin white borders
-  geom_sf(aes(fill = hispanic_pct), color = "white", linewidth = 0.25) +
-  # Apply clean viridis color palette with percentage labels
+  # Draw county polygons filled by Hispanic percentage with clean, crisp white borders
+  geom_sf(aes(fill = hispanic_pct), color = "white", linewidth = 0.3) +
+  # Apply modern magma color palette with percentage labels
   scale_fill_viridis_c(
-    option = "viridis",
+    option = "magma",
     labels = label_percent(scale = 1, accuracy = 1),
     name = "Hispanic / Latino\nPopulation (%)"
   ) +
@@ -49,6 +50,36 @@ ggplot(fl_census) +
     title = "Hispanic Population Distribution in Florida",
     subtitle = "Percentage of county residents identifying as Hispanic or Latino (2018–2022 ACS)",
     caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
+  )
+```
+
+## Top 5 Counties by Hispanic Share
+
+The table below highlights the five counties with the largest proportion of Hispanic residents in Florida:
+
+```{r}
+#| label: top-counties-table
+
+# Prepare summary table of the top 5 counties by Hispanic share
+fl_census |>
+  st_drop_geometry() |>
+  mutate(County = str_remove(NAME, " County, Florida")) |>
+  arrange(desc(hispanic_pct)) |>
+  slice_head(n = 5) |>
+  select(
+    County,
+    `Total Population` = total_popE,
+    `Hispanic Population` = hispanicE,
+    `Hispanic Share` = hispanic_pct
+  ) |>
+  mutate(
+    `Total Population` = comma(`Total Population`),
+    `Hispanic Population` = comma(`Hispanic Population`),
+    `Hispanic Share` = percent(`Hispanic Share`, scale = 1, accuracy = 0.1)
+  ) |>
+  kable(
+    align = c("l", "r", "r", "r"),
+    caption = "Florida Counties with the Highest Hispanic Population Share"
   )
 ```
 

@@ -1,5 +1,15 @@
 ---
-title: "About"
+title: "About This Project"
 ---
 
-About this site
+This project examines county-level demographic patterns across Florida using data from the U.S. Census Bureau's 2018–2022 American Community Survey (ACS) 5-Year Estimates.
+
+### Data & Methodology
+
+- **Source:** U.S. Census Bureau 5-Year American Community Survey via `tidycensus`
+- **Variables:**
+  - Total Population (`B01003_001`)
+  - Hispanic or Latino Population (`B03002_012`)
+  - Median Household Income (`B19013_001`)
+- **Spatial Geometry:** Florida county boundary shapefiles via `tigris` and Census TIGER/Line
+- **Tools:** R, `tidyverse`, `sf`, `ggplot2`, and Quarto

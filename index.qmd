@@ -1,7 +1,57 @@
 ---
-title: "Y"
+title: "Hispanic Population Distribution Across Florida Counties"
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
-This is a Quarto website.
+```{r}
+#| label: setup
+#| include: false
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+# Load required libraries
+library(tidyverse)
+library(sf)
+library(scales)
+
+# Read clean Florida demographic and boundary data created by download_data.R
+fl_census <- readRDS("data/fl_census.rds")
+```
+
+```{r}
+#| label: florida-choropleth
+#| fig-width: 8
+#| fig-height: 7
+#| fig-align: center
+
+# Create choropleth map of Florida counties
+ggplot(fl_census) +
+  # Draw county polygons filled by Hispanic percentage with thin white borders
+  geom_sf(aes(fill = hispanic_pct), color = "white", linewidth = 0.25) +
+  # Apply clean viridis color palette with percentage labels
+  scale_fill_viridis_c(
+    option = "viridis",
+    labels = label_percent(scale = 1, accuracy = 1),
+    name = "Hispanic / Latino\nPopulation (%)"
+  ) +
+  # Clean map styling with no background clutter
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, hjust = 0),
+    plot.subtitle = element_text(color = "grey30", size = 11, hjust = 0, margin = margin(b = 10)),
+    plot.caption = element_text(color = "grey40", size = 8.5, hjust = 0, margin = margin(t = 12)),
+    legend.position = "right",
+    legend.title = element_text(size = 9.5, face = "bold"),
+    legend.text = element_text(size = 8.5)
+  ) +
+  labs(
+    title = "Hispanic Population Distribution in Florida",
+    subtitle = "Percentage of county residents identifying as Hispanic or Latino (2018–2022 ACS)",
+    caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
+  )
+```
+
+## Spatial Analysis
+
+The choropleth map reveals a pronounced geographic concentration of Florida's Hispanic population, primarily clustered in South Florida and the Central Florida I-4 corridor. In South Florida, Miami-Dade County exhibits the highest Hispanic proportion in the state at 68.8%, reflecting historic and continuing immigration from Cuba and across Latin America, while agricultural interior counties like Hendry (57.1%) also sustain majority-Hispanic populations. Central Florida forms a prominent secondary hub centered on Osceola County (56.1%) and Orange County (32.9%), fueled by substantial inward migration of Puerto Rican communities to the Greater Orlando area. In contrast, northern Florida and the Panhandle exhibit significantly lower Hispanic population shares (often below 5%), highlighting a stark regional divergence across the peninsula.

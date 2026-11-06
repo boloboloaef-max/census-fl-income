@@ -1,5 +1,5 @@
 ---
-title: "Hispanic Population Distribution Across Florida Counties"
+title: "Florida Census Demographics: County and Tract Patterns"
 execute:
   echo: false
   warning: false
@@ -18,6 +18,7 @@ library(knitr)
 
 # Read clean Florida demographic and boundary data created by download_data.R
 fl_census <- readRDS("data/fl_census.rds")
+fl_tracts <- readRDS("data/fl_tracts.rds")
 ```
 
 ```{r}
@@ -51,6 +52,46 @@ ggplot(fl_census) +
     subtitle = "Percentage of county residents identifying as Hispanic or Latino (2018–2022 ACS)",
     caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
   )
+```
+
+## Florida Tract-Level Data
+
+Each dot below represents one Florida census tract. The plot uses tract-level
+ACS estimates to show how median household income varies with the Hispanic or
+Latino share of the population.
+
+```{r}
+#| label: florida-tract-points
+#| fig-width: 9
+#| fig-height: 6
+#| fig-align: center
+
+fl_tracts_plot <- fl_tracts |>
+  filter(
+    !is.na(hispanic_pct),
+    !is.na(med_incomeE),
+    hispanic_pct >= 0,
+    hispanic_pct <= 100,
+    total_popE > 0,
+    med_incomeE > 0
+  )
+
+ggplot(fl_tracts_plot, aes(x = hispanic_pct, y = med_incomeE)) +
+  geom_point(alpha = 0.35, size = 1, color = "#2878B5") +
+  scale_x_continuous(labels = label_percent(scale = 1)) +
+  scale_y_continuous(labels = label_dollar()) +
+  labs(
+    title = "Income and Hispanic Population Share Across Florida Tracts",
+    subtitle = paste(
+      "One dot per census tract;",
+      comma(nrow(fl_tracts_plot)),
+      "tracts shown (2018–2022 ACS)"
+    ),
+    x = "Hispanic or Latino population (%)",
+    y = "Median household income",
+    caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
+  ) +
+  theme_minimal()
 ```
 
 ## Top 5 Counties by Hispanic Share

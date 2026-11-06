@@ -14,6 +14,7 @@ library(tigris)
 fl_county_file <- "data/fl_census.rds"
 fl_tract_file  <- "data/fl_tracts.rds"
 us_county_file <- "data/us_counties.rds"
+us_state_file  <- "data/us_states.rds"
 
 # --- 1. Florida County Geometries & Demographics ---
 
@@ -194,6 +195,61 @@ fetch_us_counties_fallback <- function() {
     left_join(inc_raw, by = "GEOID")
 }
 
+fetch_us_states_via_tidycensus <- function() {
+  get_acs(
+    geography = "state",
+    variables = c(
+      total_pop = "B01003_001",
+      hispanic = "B03002_012",
+      med_income = "B19013_001"
+    ),
+    year = 2022,
+    geometry = FALSE,
+    output = "wide"
+  )
+}
+
+fetch_us_states_fallback <- function() {
+  message("Pulling national state-level ACS 2022 tables directly...")
+
+  pop_raw <- read_delim(
+    "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b01003.dat",
+    delim = "|", show_col_types = FALSE
+  ) |>
+    filter(grepl("^0400000US", GEO_ID)) |>
+    transmute(
+      GEOID = substr(GEO_ID, 10, 11),
+      total_popE = as.numeric(B01003_E001),
+      total_popM = as.numeric(B01003_M001)
+    )
+
+  hisp_raw <- read_delim(
+    "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b03002.dat",
+    delim = "|", show_col_types = FALSE
+  ) |>
+    filter(grepl("^0400000US", GEO_ID)) |>
+    transmute(
+      GEOID = substr(GEO_ID, 10, 11),
+      hispanicE = as.numeric(B03002_E012),
+      hispanicM = as.numeric(B03002_M012)
+    )
+
+  inc_raw <- read_delim(
+    "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b19013.dat",
+    delim = "|", show_col_types = FALSE
+  ) |>
+    filter(grepl("^0400000US", GEO_ID)) |>
+    transmute(
+      GEOID = substr(GEO_ID, 10, 11),
+      med_incomeE = as.numeric(B19013_E001),
+      med_incomeM = as.numeric(B19013_M001)
+    )
+
+  pop_raw |>
+    left_join(hisp_raw, by = "GEOID") |>
+    left_join(inc_raw, by = "GEOID")
+}
+
 # --- Execution & Processing ---
 
 # Florida Counties
@@ -264,6 +320,42 @@ us_counties_raw <- tryCatch(
 
 us_counties <- us_counties_raw |>
   left_join(fips_clean, by = "GEOID") |>
+  filter(state %in% c(state.abb, "DC")) |>
+  mutate(across(
+    c(total_popE, total_popM, hispanicE, hispanicM, med_incomeE, med_incomeM),
+    \(x) if_else(x < 0, NA_real_, x)
+  )) |>
+  mutate(
+    fips = GEOID,
+    hispanic_pct = if_else(
+      !is.na(total_popE) & total_popE > 0,
+      (hispanicE / total_popE) * 100,
+      NA_real_
+    ),
+    NAME = paste0(county, ", ", state)
+  ) |>
+  select(
+    GEOID, fips, NAME, county, state, state_name, region,
+    total_popE, total_popM, hispanicE, hispanicM,
+    med_incomeE, med_incomeM, hispanic_pct
+  )
+saveRDS(us_counties, file = us_county_file)
+message("Saved US county data (", nrow(us_counties), " counties) to ", us_county_file)
+
+# US State Geometries & Demographics (50 states)
+message("Processing US state data...")
+us_states_raw <- tryCatch(
+  fetch_us_states_via_tidycensus(),
+  error = \(e) {
+    message("tidycensus US state notice: ", e$message)
+    fetch_us_states_fallback()
+  }
+) 
+
+us_states <- states(cb = TRUE, year = 2022) |>
+  filter(STUSPS %in% state.abb) |>
+  select(GEOID, STUSPS, state_name = NAME, geometry) |>
+  left_join(us_states_raw, by = "GEOID") |>
   mutate(across(
     c(total_popE, total_popM, hispanicE, hispanicM, med_incomeE, med_incomeM),
     \(x) if_else(x < 0, NA_real_, x)
@@ -273,13 +365,11 @@ us_counties <- us_counties_raw |>
       !is.na(total_popE) & total_popE > 0,
       (hispanicE / total_popE) * 100,
       NA_real_
-    ),
-    NAME = paste0(county, ", ", state)
+    )
   ) |>
   select(
-    GEOID, NAME, county, state, state_name, region,
-    total_popE, total_popM, hispanicE, hispanicM,
-    med_incomeE, med_incomeM, hispanic_pct
+    GEOID, STUSPS, state_name, total_popE, total_popM,
+    hispanicE, hispanicM, med_incomeE, med_incomeM, hispanic_pct, geometry
   )
-saveRDS(us_counties, file = us_county_file)
-message("Saved US county data (", nrow(us_counties), " counties) to ", us_county_file)
+saveRDS(us_states, file = us_state_file)
+message("Saved US state data (", nrow(us_states), " states) to ", us_state_file)

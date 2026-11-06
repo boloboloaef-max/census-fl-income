@@ -1,6 +1,6 @@
 ---
-title: "Census Demographics: Florida & National County Analysis"
-subtitle: "Analyzing 5,100+ FL Tracts & 3,100+ US Counties (2018–2022 ACS)"
+title: "Florida & U.S. Census Geography"
+subtitle: "County- and state-level patterns in income and Hispanic population"
 execute:
   echo: false
   warning: false
@@ -11,258 +11,286 @@ execute:
 #| label: setup
 #| include: false
 
-# Load required libraries
 library(tidyverse)
 library(sf)
 library(scales)
-library(knitr)
+library(patchwork)
+library(DT)
 
-# Read clean Florida demographic and boundary data created by download_data.R
-fl_census   <- readRDS("data/fl_census.rds")
-fl_tracts   <- readRDS("data/fl_tracts.rds")
-us_counties <- readRDS("data/us_counties.rds")
+fl_census <- readRDS("data/fl_census.rds")
+us_states <- readRDS("data/us_states.rds")
+
+fl_county_labels <- fl_census |>
+  mutate(county_label = str_remove(NAME, " County, Florida")) |>
+  st_transform(3086) |>
+  st_point_on_surface()
+fl_county_labels$label_x <- st_coordinates(fl_county_labels)[, 1]
+fl_county_labels$label_y <- st_coordinates(fl_county_labels)[, 2]
+fl_census_map <- st_transform(fl_census, 3086)
 ```
 
-::: {.callout-note appearance="simple"}
-### Milestone #5 Dataset Scale: Analyzing 5,100+ FL Tracts & 3,100+ US Counties
-This study leverages massive demographic datasets from the U.S. Census Bureau's 2018–2022 American Community Survey (ACS) 5-Year Estimates across two geographic tiers:
-- **Florida Census Tracts:** High-density neighborhood resolution across **`r comma(nrow(fl_tracts))`** tracts in all 67 Florida counties.
-- **United States National Counties:** Nationwide comparative scale analyzing **`r comma(nrow(us_counties))`** counties across all 50 states, the District of Columbia, and Puerto Rico.
-:::
+## Florida Counties
 
-## Florida Demographics: County & Neighborhood Patterns
-
-### County-Level Distribution of Hispanic Population
-
-The choropleth map below displays the geographic concentration of Hispanic and Latino residents across all 67 Florida counties.
+These maps show both Hispanic or Latino population share and median household
+income across all 67 Florida counties. County names are labeled directly on
+each map.
 
 ```{r}
-#| label: florida-choropleth
-#| fig-width: 8.5
+#| label: florida-hispanic-map
+#| fig-width: 9
+#| fig-height: 9
+#| fig-align: center
+
+ggplot(fl_census_map) +
+  geom_sf(aes(fill = hispanic_pct), color = "white", linewidth = 0.35) +
+  ggrepel::geom_text_repel(
+    data = fl_county_labels,
+    aes(x = label_x, y = label_y, label = county_label),
+    color = "#172033",
+    size = 2.6,
+    box.padding = 0.2,
+    point.padding = 0.15,
+    segment.color = "grey35",
+    segment.size = 0.25,
+    min.segment.length = 0,
+    max.overlaps = Inf,
+    seed = 2026,
+    inherit.aes = FALSE
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    limits = c(0, 100),
+    labels = label_percent(scale = 1, accuracy = 1),
+    name = "Hispanic / Latino\npopulation"
+  ) +
+  coord_sf(crs = 3086, default_crs = st_crs(3086), datum = NA) +
+  labs(
+    title = "Hispanic or Latino Population by County",
+    subtitle = "Share of county residents, 2018–2022",
+    caption = "Source: U.S. Census Bureau, 2018–2022 ACS 5-Year Estimates"
+  ) +
+  theme_void(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(color = "grey30"),
+    plot.caption = element_text(color = "grey40", hjust = 0),
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.key.width = unit(3, "cm")
+  )
+```
+
+```{r}
+#| label: florida-income-map
+#| fig-width: 9
+#| fig-height: 9
+#| fig-align: center
+
+ggplot(fl_census_map) +
+  geom_sf(aes(fill = med_incomeE), color = "white", linewidth = 0.35) +
+  ggrepel::geom_text_repel(
+    data = fl_county_labels,
+    aes(x = label_x, y = label_y, label = county_label),
+    color = "#172033",
+    size = 2.6,
+    box.padding = 0.2,
+    point.padding = 0.15,
+    segment.color = "grey35",
+    segment.size = 0.25,
+    min.segment.length = 0,
+    max.overlaps = Inf,
+    seed = 2026,
+    inherit.aes = FALSE
+  ) +
+  scale_fill_viridis_c(
+    option = "viridis",
+    labels = label_dollar(),
+    name = "Median household\nincome"
+  ) +
+  coord_sf(crs = 3086, default_crs = st_crs(3086), datum = NA) +
+  labs(
+    title = "Median Household Income by County",
+    subtitle = "ACS median household income estimate, 2018–2022",
+    caption = "Source: U.S. Census Bureau, 2018–2022 ACS 5-Year Estimates"
+  ) +
+  theme_void(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(color = "grey30"),
+    plot.caption = element_text(color = "grey40", hjust = 0),
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.key.width = unit(3, "cm")
+  )
+```
+
+## United States
+
+The national maps compare all 50 states. Alaska and Hawaii are shown in
+separate panels so they remain visible at a useful scale; state postal
+abbreviations identify each map area.
+
+```{r}
+#| label: us-state-maps
+#| fig-width: 12
 #| fig-height: 7
 #| fig-align: center
 
-# Create choropleth map of Florida counties
-ggplot(fl_census) +
-  # Draw county polygons filled by Hispanic percentage with clean, crisp white borders
-  geom_sf(aes(fill = hispanic_pct), color = "white", linewidth = 0.3) +
-  # Apply modern magma color palette with percentage labels
-  scale_fill_viridis_c(
-    option = "magma",
-    labels = label_percent(scale = 1, accuracy = 1),
-    name = "Hispanic / Latino\nPopulation (%)"
+small_northeast_states <- c("CT", "RI", "MA", "VT", "NH", "ME", "NJ", "DE", "MD")
+conus <- us_states |>
+  filter(!STUSPS %in% c("AK", "HI", small_northeast_states))
+alaska <- us_states |> filter(STUSPS == "AK")
+hawaii <- us_states |> filter(STUSPS == "HI")
+northeast <- us_states |> filter(STUSPS %in% small_northeast_states)
+
+state_map_panel <- function(data, variable, projection, panel_title, palette, limits, labels, legend_title) {
+  map_data <- st_transform(data, projection)
+  label_data <- map_data |>
+    st_point_on_surface()
+  label_data$label_x <- st_coordinates(label_data)[, 1]
+  label_data$label_y <- st_coordinates(label_data)[, 2]
+
+  ggplot(map_data) +
+    geom_sf(aes(fill = .data[[variable]]), color = "white", linewidth = 0.35) +
+    ggrepel::geom_text_repel(
+      data = label_data,
+      aes(x = label_x, y = label_y, label = STUSPS),
+      color = "#172033",
+      size = 3.2,
+      box.padding = 0.2,
+      point.padding = 0.15,
+      segment.color = "grey35",
+      segment.size = 0.25,
+      min.segment.length = 0,
+      max.overlaps = Inf,
+      seed = 2026,
+      inherit.aes = FALSE
+    ) +
+    scale_fill_viridis_c(
+      option = palette,
+      limits = limits,
+      labels = labels,
+      name = legend_title
+    ) +
+    coord_sf(crs = projection, default_crs = st_crs(projection), datum = NA) +
+    labs(title = panel_title) +
+    theme_void(base_size = 12) +
+    theme(
+      plot.title = element_text(face = "bold", hjust = 0.5),
+      legend.position = "bottom",
+      legend.title = element_text(face = "bold"),
+      legend.key.width = unit(3, "cm"),
+      plot.margin = margin(4, 4, 4, 4)
+    )
+}
+
+state_map <- function(variable, title, palette, labels, legend_title) {
+  state_limits <- range(us_states[[variable]], na.rm = TRUE)
+
+  (
+    state_map_panel(
+      conus, variable, 5070, "Contiguous states", palette,
+      state_limits, labels, legend_title
+    ) |
+      state_map_panel(
+        alaska, variable, 3338, "Alaska", palette,
+        state_limits, labels, legend_title
+      ) |
+      state_map_panel(
+        hawaii, variable, 26905, "Hawaii", palette,
+        state_limits, labels, legend_title
+        ) |
+        state_map_panel(
+          northeast, variable, 5070, "Northeast detail", palette,
+          state_limits, labels, legend_title
+        )
   ) +
-  # Clean map styling with no background clutter
-  theme_void() +
-  theme(
-    plot.title = element_text(face = "bold", size = 16, hjust = 0),
-    plot.subtitle = element_text(color = "grey30", size = 11, hjust = 0, margin = margin(b = 10)),
-    plot.caption = element_text(color = "grey40", size = 8.5, hjust = 0, margin = margin(t = 12)),
-    legend.position = "right",
-    legend.title = element_text(size = 9.5, face = "bold"),
-    legend.text = element_text(size = 8.5)
-  ) +
-  labs(
-    title = "Hispanic Population Distribution in Florida",
-    subtitle = "Percentage of county residents identifying as Hispanic or Latino (2018–2022 ACS)",
-    caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
-  )
+      plot_layout(widths = c(4, 1.1, 0.8, 1.6), guides = "collect") +
+    plot_annotation(
+      title = title,
+      caption = "Source: U.S. Census Bureau, 2018–2022 ACS 5-Year Estimates"
+    ) &
+    theme(
+      plot.title = element_text(face = "bold", size = 16),
+      plot.caption = element_text(color = "grey40", hjust = 0.5),
+      legend.position = "bottom"
+    )
+}
+
+state_map(
+  "hispanic_pct",
+  "Hispanic or Latino Population Share by State",
+  "plasma",
+  label_percent(scale = 1, accuracy = 1),
+  "Hispanic / Latino population"
+)
+
+state_map(
+  "med_incomeE",
+  "Median Household Income by State",
+  "viridis",
+  label_dollar(),
+  "Median household income"
+)
 ```
 
-### Florida Tract-Level Microdata (5,100+ Census Tracts)
+## County and State Estimates
 
-Moving beyond county aggregates, the high-density scatter plot below plots over 5,000 individual Florida census tracts. Each point represents a neighborhood census tract, with point sizes scaled to total population, points colored by county, and a smoothed cyan trend line highlighting the non-linear relationship between median household income and Hispanic population share.
-
-```{r}
-#| label: florida-tract-scatter
-#| fig-width: 10
-#| fig-height: 6.5
-#| fig-align: center
-
-# Prepare Florida tract dataset joined with county names
-fl_tracts_plot <- fl_tracts |>
-  mutate(county_geoid = substr(GEOID, 1, 5)) |>
-  left_join(
-    fl_census |>
-      st_drop_geometry() |>
-      select(GEOID, county_name = NAME),
-    by = c("county_geoid" = "GEOID")
-  ) |>
-  mutate(County = str_remove(county_name, " County, Florida")) |>
-  filter(
-    !is.na(hispanic_pct),
-    !is.na(med_incomeE),
-    !is.na(County),
-    hispanic_pct >= 0,
-    hispanic_pct <= 100,
-    total_popE > 0,
-    med_incomeE > 0
-  )
-
-# Plot income vs. Hispanic share for all 5,100+ Florida census tracts
-ggplot(
-  fl_tracts_plot,
-  aes(x = med_incomeE, y = hispanic_pct)
-) +
-  # Draw tract points with alpha transparency to reveal dense neighborhood clustering
-  geom_point(aes(size = total_popE, color = County), alpha = 0.35) +
-  # Add cyan smoothed trend curve
-  geom_smooth(color = "cyan", se = FALSE, linewidth = 1.1) +
-  scale_color_viridis_d(option = "turbo", guide = "none") +
-  scale_size_continuous(
-    range = c(0.7, 4.5),
-    trans = "sqrt",
-    labels = label_comma(),
-    name = "Tract Population"
-  ) +
-  scale_x_continuous(labels = label_dollar()) +
-  scale_y_continuous(labels = label_percent(scale = 1)) +
-  labs(
-    title = "Median Household Income vs. Hispanic Share across 5,100+ Florida Tracts",
-    subtitle = paste0(
-      comma(nrow(fl_tracts_plot)),
-      " tracts | Size = population | Color = county | Cyan curve = smoothed loess trend"
-    ),
-    x = "Median Household Income",
-    y = "Hispanic Population Share",
-    caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    plot.title = element_text(face = "bold", size = 15),
-    plot.subtitle = element_text(color = "grey30", size = 10.5, margin = margin(b = 8)),
-    legend.position = "bottom"
-  )
-```
-
-### Top 5 Florida Counties by Hispanic Share
-
-The summary table below highlights the five Florida counties with the largest proportion of Hispanic residents:
+Search, sort, or filter the table to inspect population, Hispanic or Latino
+population share, and median household income for every Florida county and
+every U.S. state. Values are ACS 5-Year Estimates for 2018–2022.
 
 ```{r}
-#| label: top-counties-table
+#| label: geographic-data-table
 
-# Prepare summary table of the top 5 Florida counties by Hispanic share
-fl_census |>
+county_table <- fl_census |>
   st_drop_geometry() |>
-  mutate(County = str_remove(NAME, " County, Florida")) |>
-  arrange(desc(hispanic_pct)) |>
-  slice_head(n = 5) |>
-  select(
-    County,
-    `Total Population` = total_popE,
-    `Hispanic Population` = hispanicE,
-    `Hispanic Share` = hispanic_pct
-  ) |>
-  mutate(
-    `Total Population` = comma(`Total Population`),
-    `Hispanic Population` = comma(`Hispanic Population`),
-    `Hispanic Share` = percent(`Hispanic Share`, scale = 1, accuracy = 0.1)
-  ) |>
-  kable(
-    align = c("l", "r", "r", "r"),
-    caption = "Florida Counties with the Highest Hispanic Population Share"
-  )
-```
-
----
-
-## National Demographics: 3,100+ U.S. Counties across Regions
-
-### Nationwide Comparison: Income vs. Hispanic Share
-
-To contextualize Florida's demographics within the broader American landscape, the high-density plot below analyzes over 3,100 U.S. counties. The data are faceted into the four official U.S. Census Regions—**Midwest**, **Northeast**, **South**, and **West**—revealing distinct regional economic and demographic alignments.
-
-```{r}
-#| label: us-counties-scatter
-#| fig-width: 11
-#| fig-height: 8.5
-#| fig-align: center
-
-# Filter national counties with valid economic and demographic observations
-us_plot_data <- us_counties |>
-  filter(
-    !is.na(med_incomeE),
-    !is.na(hispanic_pct),
-    !is.na(region),
-    region %in% c("Midwest", "Northeast", "South", "West")
+  transmute(
+    Geography = "Florida county",
+    Name = str_remove(NAME, " County, Florida"),
+    State = "Florida",
+    Population = total_popE,
+    `Hispanic population` = hispanicE,
+    `Hispanic population (%)` = hispanic_pct / 100,
+    `Median household income` = med_incomeE
   )
 
-# High-density faceted regional comparison
-ggplot(
-  us_plot_data,
-  aes(x = med_incomeE, y = hispanic_pct, color = region)
-) +
-  # Points sized by county population with alpha transparency for high density
-  geom_point(aes(size = total_popE), alpha = 0.35) +
-  # Smoothed regional loess trend curves
-  geom_smooth(method = "loess", se = FALSE, color = "grey25", linewidth = 0.9) +
-  # Facet by U.S. Census Region
-  facet_wrap(~region, ncol = 2) +
-  scale_color_brewer(palette = "Dark2", guide = "none") +
-  scale_size_continuous(
-    range = c(0.8, 5.5),
-    trans = "sqrt",
-    labels = label_comma(),
-    name = "County Population"
-  ) +
-  scale_x_continuous(labels = label_dollar()) +
-  scale_y_continuous(labels = label_percent(scale = 1)) +
-  labs(
-    title = "National Income vs. Hispanic Population Distribution by Region",
-    subtitle = paste0(
-      "High-density analysis across ", comma(nrow(us_plot_data)),
-      " U.S. counties | Faceted by U.S. Census Region with regional loess smooth curves"
+state_table <- us_states |>
+  st_drop_geometry() |>
+  transmute(
+    Geography = "U.S. state",
+    Name = state_name,
+    State = STUSPS,
+    Population = total_popE,
+    `Hispanic population` = hispanicE,
+    `Hispanic population (%)` = hispanic_pct / 100,
+    `Median household income` = med_incomeE
+  )
+
+bind_rows(county_table, state_table) |>
+  arrange(Geography, Name) |>
+  datatable(
+    rownames = FALSE,
+    filter = "top",
+    options = list(
+      pageLength = 25,
+      scrollX = TRUE,
+      autoWidth = TRUE
     ),
-    x = "Median Household Income",
-    y = "Hispanic Population Share",
-    caption = "Source: U.S. Census Bureau, 2018–2022 American Community Survey 5-Year Estimates"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    strip.text = element_text(face = "bold", size = 12),
-    strip.background = element_rect(fill = "grey95", color = NA),
-    plot.title = element_text(face = "bold", size = 15),
-    plot.subtitle = element_text(color = "grey30", size = 11, margin = margin(b = 10)),
-    legend.position = "bottom"
+    caption = "Florida Counties and U.S. States: 2018–2022 ACS Estimates"
+  ) |>
+  formatRound(
+    columns = c("Population", "Hispanic population"),
+    digits = 0,
+    mark = ","
+  ) |>
+  formatPercentage(
+    columns = "Hispanic population (%)",
+    digits = 1
+  ) |>
+  formatCurrency(
+    columns = "Median household income",
+    currency = "$",
+    digits = 0
   )
 ```
-
-### Regional Demographic Breakdown
-
-The table below summarizes median household income, aggregate population, and average Hispanic population shares across the four U.S. regions:
-
-```{r}
-#| label: us-regional-summary-table
-
-# Compute weighted economic and demographic indicators by region
-us_plot_data |>
-  group_by(`U.S. Region` = region) |>
-  summarise(
-    `Counties Analyzed` = n(),
-    `Total Population` = sum(total_popE, na.rm = TRUE),
-    `Weighted Median Income` = sum(med_incomeE * total_popE, na.rm = TRUE) / sum(total_popE, na.rm = TRUE),
-    `Aggregate Hispanic Share` = (sum(hispanicE, na.rm = TRUE) / sum(total_popE, na.rm = TRUE)) * 100
-  ) |>
-  mutate(
-    `Counties Analyzed` = comma(`Counties Analyzed`),
-    `Total Population` = comma(`Total Population`),
-    `Weighted Median Income` = dollar(`Weighted Median Income`),
-    `Aggregate Hispanic Share` = percent(`Aggregate Hispanic Share`, scale = 1, accuracy = 0.1)
-  ) |>
-  kable(
-    align = c("l", "r", "r", "r", "r"),
-    caption = "Demographic Overview Across U.S. Census Regions (2018–2022 ACS)"
-  )
-```
-
-## Comparative Demographic Insights
-
-1. **State vs. National Dynamics:**
-   Across the 3,144 U.S. counties, the West and South exhibit the highest concentrations of Hispanic residents, but their underlying relationships with income differ substantially. In the West, Hispanic populations are distributed broadly across both agricultural communities and affluent coastal counties. In the South, Florida functions as an exceptional demographic anchor where high Hispanic shares span the entire economic spectrum—from agricultural hubs in Hendry and Hardee counties to major metropolitan centers in Miami-Dade, Broward, and Orange counties.
-
-2. **Neighborhood-Scale Nuance in Florida:**
-   While county aggregates provide an essential high-level overview, analyzing 5,160 individual Florida tracts reveals tremendous internal heterogeneity. Many tracts in Miami-Dade and Osceola exceed 80% Hispanic concentration while spanning household incomes from under $25,000 to over $150,000. The non-linear cyan loess trend illustrates that Hispanic representation in Florida is not confined to low-income census tracts, reflecting the robust, multi-generational economic diversity of the state's Hispanic populace.
-
-3. **Regional Continental Divergence:**
-   In the Midwest and Northeast, the vast majority of counties report Hispanic shares below 10%, with elevated percentages tightly focused in specific urbanized manufacturing or transportation hubs. By contrast, Southern and Western counties exhibit substantial geographic clustering shaped by historic borders, migration channels, and expanding regional economic centers.

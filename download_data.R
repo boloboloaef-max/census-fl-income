@@ -1,16 +1,23 @@
 # download_data.R
-# Script to download Florida county- and tract-level demographic data from the 5-year ACS
-# using tidycensus (with an automatic fallback to Census Bureau direct tables
-# if a Census API key is not yet installed).
+# Script to download Census demographic data from the 5-year ACS:
+# 1. Florida county boundaries and demographics (data/fl_census.rds)
+# 2. Florida census tracts (data/fl_tracts.rds) - 5,100+ observations
+# 3. US national county demographics (data/us_counties.rds) - 3,100+ observations
+#
+# Uses tidycensus with an automatic fallback to Census Bureau direct table files.
 
 library(tidycensus)
 library(tidyverse)
 library(sf)
+library(tigris)
 
-data_file <- "data/fl_census.rds"
-tract_data_file <- "data/fl_tracts.rds"
+fl_county_file <- "data/fl_census.rds"
+fl_tract_file  <- "data/fl_tracts.rds"
+us_county_file <- "data/us_counties.rds"
 
-fetch_via_tidycensus <- function() {
+# --- 1. Florida County Geometries & Demographics ---
+
+fetch_fl_counties_via_tidycensus <- function() {
   get_acs(
     geography = "county",
     state = "FL",
@@ -25,15 +32,12 @@ fetch_via_tidycensus <- function() {
   )
 }
 
-fetch_fallback <- function() {
-  message("Pulling county geometries and ACS 2022 tables directly from the US Census Bureau...")
-  library(tigris)
+fetch_fl_counties_fallback <- function() {
+  message("Pulling Florida county geometries and ACS 2022 tables directly...")
   options(tigris_use_cache = TRUE)
-
   fl_geom <- counties(state = "FL", cb = TRUE, year = 2022) |>
     select(GEOID, NAME, geometry)
 
-  # Total population (B01003)
   pop_raw <- read_delim(
     "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b01003.dat",
     delim = "|", show_col_types = FALSE
@@ -45,7 +49,6 @@ fetch_fallback <- function() {
       total_popM = as.numeric(B01003_M001)
     )
 
-  # Hispanic or Latino population (B03002)
   hisp_raw <- read_delim(
     "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b03002.dat",
     delim = "|", show_col_types = FALSE
@@ -57,7 +60,6 @@ fetch_fallback <- function() {
       hispanicM = as.numeric(B03002_M012)
     )
 
-  # Median household income (B19013)
   inc_raw <- read_delim(
     "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b19013.dat",
     delim = "|", show_col_types = FALSE
@@ -76,7 +78,9 @@ fetch_fallback <- function() {
     mutate(NAME = paste0(NAME, " County, Florida"))
 }
 
-fetch_tracts_via_tidycensus <- function() {
+# --- 2. Florida Tract Demographics ---
+
+fetch_fl_tracts_via_tidycensus <- function() {
   get_acs(
     geography = "tract",
     state = "FL",
@@ -91,8 +95,8 @@ fetch_tracts_via_tidycensus <- function() {
   )
 }
 
-fetch_tracts_fallback <- function() {
-  message("Pulling Florida tract-level ACS 2022 tables directly from the US Census Bureau...")
+fetch_fl_tracts_fallback <- function() {
+  message("Pulling Florida tract-level ACS 2022 tables directly...")
 
   pop_raw <- read_delim(
     "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b01003.dat",
@@ -133,28 +137,87 @@ fetch_tracts_fallback <- function() {
     mutate(NAME = paste("Census Tract", GEOID))
 }
 
-# Try tidycensus first; if missing key or error, use Census tables fallback
-fl_census <- tryCatch(
-  fetch_via_tidycensus(),
-  error = function(e) {
-    message("tidycensus notice: ", e$message)
-    fetch_fallback()
-  }
-)
+# --- 3. US Counties Demographics & Regions ---
 
-fl_census <- fl_census |>
+fetch_us_counties_via_tidycensus <- function() {
+  get_acs(
+    geography = "county",
+    variables = c(
+      total_pop = "B01003_001",
+      hispanic = "B03002_012",
+      med_income = "B19013_001"
+    ),
+    year = 2022,
+    geometry = FALSE,
+    output = "wide"
+  )
+}
+
+fetch_us_counties_fallback <- function() {
+  message("Pulling national county-level ACS 2022 tables directly...")
+
+  pop_raw <- read_delim(
+    "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b01003.dat",
+    delim = "|", show_col_types = FALSE
+  ) |>
+    filter(grepl("^0500000US", GEO_ID)) |>
+    transmute(
+      GEOID = substr(GEO_ID, 10, 14),
+      total_popE = as.numeric(B01003_E001),
+      total_popM = as.numeric(B01003_M001)
+    )
+
+  hisp_raw <- read_delim(
+    "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b03002.dat",
+    delim = "|", show_col_types = FALSE
+  ) |>
+    filter(grepl("^0500000US", GEO_ID)) |>
+    transmute(
+      GEOID = substr(GEO_ID, 10, 14),
+      hispanicE = as.numeric(B03002_E012),
+      hispanicM = as.numeric(B03002_M012)
+    )
+
+  inc_raw <- read_delim(
+    "https://www2.census.gov/programs-surveys/acs/summary_file/2022/table-based-SF/data/5YRData/acsdt5y2022-b19013.dat",
+    delim = "|", show_col_types = FALSE
+  ) |>
+    filter(grepl("^0500000US", GEO_ID)) |>
+    transmute(
+      GEOID = substr(GEO_ID, 10, 14),
+      med_incomeE = as.numeric(B19013_E001),
+      med_incomeM = as.numeric(B19013_M001)
+    )
+
+  pop_raw |>
+    left_join(hisp_raw, by = "GEOID") |>
+    left_join(inc_raw, by = "GEOID")
+}
+
+# --- Execution & Processing ---
+
+# Florida Counties
+message("Processing Florida county data...")
+fl_census <- tryCatch(
+  fetch_fl_counties_via_tidycensus(),
+  error = \(e) {
+    message("tidycensus notice: ", e$message)
+    fetch_fl_counties_fallback()
+  }
+) |>
   mutate(
     hispanic_pct = (hispanicE / total_popE) * 100
   )
+saveRDS(fl_census, file = fl_county_file)
+message("Saved Florida county data to ", fl_county_file)
 
-saveRDS(fl_census, file = data_file)
-message("Saved Florida county census data to ", data_file)
-
+# Florida Tracts (5,100+ observations)
+message("Processing Florida tract data...")
 fl_tracts <- tryCatch(
-  fetch_tracts_via_tidycensus(),
-  error = function(e) {
-    message("tidycensus tract data notice: ", e$message)
-    fetch_tracts_fallback()
+  fetch_fl_tracts_via_tidycensus(),
+  error = \(e) {
+    message("tidycensus tract notice: ", e$message)
+    fetch_fl_tracts_fallback()
   }
 ) |>
   mutate(across(
@@ -172,6 +235,51 @@ fl_tracts <- tryCatch(
     GEOID, NAME, total_popE, total_popM, hispanicE, hispanicM,
     med_incomeE, med_incomeM, hispanic_pct
   )
+saveRDS(fl_tracts, file = fl_tract_file)
+message("Saved Florida tract data (", nrow(fl_tracts), " tracts) to ", fl_tract_file)
 
-saveRDS(fl_tracts, file = tract_data_file)
-message("Saved Florida tract census data to ", tract_data_file)
+# US National Counties (3,100+ observations)
+message("Processing US national county data...")
+data("fips_codes", package = "tigris")
+
+region_map <- tibble(
+  state = c(state.abb, "DC", "PR"),
+  region = c(as.character(state.region), "South", "Territories")
+) |>
+  mutate(region = if_else(region == "North Central", "Midwest", region))
+
+fips_clean <- fips_codes |>
+  mutate(GEOID = paste0(state_code, county_code)) |>
+  select(GEOID, state, state_name, county) |>
+  left_join(region_map, by = "state") |>
+  mutate(region = if_else(is.na(region), "Territories", region))
+
+us_counties_raw <- tryCatch(
+  fetch_us_counties_via_tidycensus(),
+  error = \(e) {
+    message("tidycensus US county notice: ", e$message)
+    fetch_us_counties_fallback()
+  }
+)
+
+us_counties <- us_counties_raw |>
+  left_join(fips_clean, by = "GEOID") |>
+  mutate(across(
+    c(total_popE, total_popM, hispanicE, hispanicM, med_incomeE, med_incomeM),
+    \(x) if_else(x < 0, NA_real_, x)
+  )) |>
+  mutate(
+    hispanic_pct = if_else(
+      !is.na(total_popE) & total_popE > 0,
+      (hispanicE / total_popE) * 100,
+      NA_real_
+    ),
+    NAME = paste0(county, ", ", state)
+  ) |>
+  select(
+    GEOID, NAME, county, state, state_name, region,
+    total_popE, total_popM, hispanicE, hispanicM,
+    med_incomeE, med_incomeM, hispanic_pct
+  )
+saveRDS(us_counties, file = us_county_file)
+message("Saved US county data (", nrow(us_counties), " counties) to ", us_county_file)

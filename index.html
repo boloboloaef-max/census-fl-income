@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Census Demographics: Florida &amp; National County Analysis – Florida Census Demographics</title>
+<title>Florida &amp; U.S. Census Geography – Florida Census Demographics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -73,6 +73,20 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="site_libs/datatables-binding-0.34.0/datatables.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet">
+<script src="site_libs/nouislider-7.0.10/jquery.nouislider.min.js"></script>
+<link href="site_libs/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet">
+<script src="site_libs/selectize-0.12.0/selectize.min.js"></script>
+<link href="site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -119,18 +133,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#florida-demographics-county-neighborhood-patterns" id="toc-florida-demographics-county-neighborhood-patterns" class="nav-link active" data-scroll-target="#florida-demographics-county-neighborhood-patterns">Florida Demographics: County &amp; Neighborhood Patterns</a>
-  <ul class="collapse">
-  <li><a href="#county-level-distribution-of-hispanic-population" id="toc-county-level-distribution-of-hispanic-population" class="nav-link" data-scroll-target="#county-level-distribution-of-hispanic-population">County-Level Distribution of Hispanic Population</a></li>
-  <li><a href="#florida-tract-level-microdata-5100-census-tracts" id="toc-florida-tract-level-microdata-5100-census-tracts" class="nav-link" data-scroll-target="#florida-tract-level-microdata-5100-census-tracts">Florida Tract-Level Microdata (5,100+ Census Tracts)</a></li>
-  <li><a href="#top-5-florida-counties-by-hispanic-share" id="toc-top-5-florida-counties-by-hispanic-share" class="nav-link" data-scroll-target="#top-5-florida-counties-by-hispanic-share">Top 5 Florida Counties by Hispanic Share</a></li>
-  </ul></li>
-  <li><a href="#national-demographics-3100-u.s.-counties-across-regions" id="toc-national-demographics-3100-u.s.-counties-across-regions" class="nav-link" data-scroll-target="#national-demographics-3100-u.s.-counties-across-regions">National Demographics: 3,100+ U.S. Counties across Regions</a>
-  <ul class="collapse">
-  <li><a href="#nationwide-comparison-income-vs.-hispanic-share" id="toc-nationwide-comparison-income-vs.-hispanic-share" class="nav-link" data-scroll-target="#nationwide-comparison-income-vs.-hispanic-share">Nationwide Comparison: Income vs.&nbsp;Hispanic Share</a></li>
-  <li><a href="#regional-demographic-breakdown" id="toc-regional-demographic-breakdown" class="nav-link" data-scroll-target="#regional-demographic-breakdown">Regional Demographic Breakdown</a></li>
-  </ul></li>
-  <li><a href="#comparative-demographic-insights" id="toc-comparative-demographic-insights" class="nav-link" data-scroll-target="#comparative-demographic-insights">Comparative Demographic Insights</a></li>
+  <li><a href="#florida-counties" id="toc-florida-counties" class="nav-link active" data-scroll-target="#florida-counties">Florida Counties</a></li>
+  <li><a href="#united-states" id="toc-united-states" class="nav-link" data-scroll-target="#united-states">United States</a></li>
+  <li><a href="#county-and-state-estimates" id="toc-county-and-state-estimates" class="nav-link" data-scroll-target="#county-and-state-estimates">County and State Estimates</a></li>
   </ul>
 </nav>
     </div>
@@ -139,8 +144,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Census Demographics: Florida &amp; National County Analysis</h1>
-<p class="subtitle lead">Analyzing 5,100+ FL Tracts &amp; 3,100+ US Counties (2018–2022 ACS)</p>
+<h1 class="title">Florida &amp; U.S. Census Geography</h1>
+<p class="subtitle lead">County- and state-level patterns in income and Hispanic population</p>
 </div>
 
 
@@ -157,180 +162,57 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Milestone #5 Dataset Scale: Analyzing 5,100+ FL Tracts &amp; 3,100+ US Counties
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This study leverages massive demographic datasets from the U.S. Census Bureau’s 2018–2022 American Community Survey (ACS) 5-Year Estimates across two geographic tiers: - <strong>Florida Census Tracts:</strong> High-density neighborhood resolution across <strong>5,160</strong> tracts in all 67 Florida counties. - <strong>United States National Counties:</strong> Nationwide comparative scale analyzing <strong>3,222</strong> counties across all 50 states, the District of Columbia, and Puerto Rico.</p>
-</div>
-</div>
-<section id="florida-demographics-county-neighborhood-patterns" class="level2">
-<h2 class="anchored" data-anchor-id="florida-demographics-county-neighborhood-patterns">Florida Demographics: County &amp; Neighborhood Patterns</h2>
-<section id="county-level-distribution-of-hispanic-population" class="level3">
-<h3 class="anchored" data-anchor-id="county-level-distribution-of-hispanic-population">County-Level Distribution of Hispanic Population</h3>
-<p>The choropleth map below displays the geographic concentration of Hispanic and Latino residents across all 67 Florida counties.</p>
+<section id="florida-counties" class="level2">
+<h2 class="anchored" data-anchor-id="florida-counties">Florida Counties</h2>
+<p>These maps show both Hispanic or Latino population share and median household income across all 67 Florida counties. County names are labeled directly on each map.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/florida-choropleth-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="816"></p>
+<p><img src="index_files/figure-html/florida-hispanic-map-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/florida-income-map-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="florida-tract-level-microdata-5100-census-tracts" class="level3">
-<h3 class="anchored" data-anchor-id="florida-tract-level-microdata-5100-census-tracts">Florida Tract-Level Microdata (5,100+ Census Tracts)</h3>
-<p>Moving beyond county aggregates, the high-density scatter plot below plots over 5,000 individual Florida census tracts. Each point represents a neighborhood census tract, with point sizes scaled to total population, points colored by county, and a smoothed cyan trend line highlighting the non-linear relationship between median household income and Hispanic population share.</p>
+<section id="united-states" class="level2">
+<h2 class="anchored" data-anchor-id="united-states">United States</h2>
+<p>The national maps compare all 50 states. Alaska and Hawaii are shown in separate panels so they remain visible at a useful scale; state postal abbreviations identify each map area.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/florida-tract-scatter-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
+<p><img src="index_files/figure-html/us-state-maps-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/us-state-maps-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="top-5-florida-counties-by-hispanic-share" class="level3">
-<h3 class="anchored" data-anchor-id="top-5-florida-counties-by-hispanic-share">Top 5 Florida Counties by Hispanic Share</h3>
-<p>The summary table below highlights the five Florida counties with the largest proportion of Hispanic residents:</p>
+<section id="county-and-state-estimates" class="level2">
+<h2 class="anchored" data-anchor-id="county-and-state-estimates">County and State Estimates</h2>
+<p>Search, sort, or filter the table to inspect population, Hispanic or Latino population share, and median household income for every Florida county and every U.S. state. Values are ACS 5-Year Estimates for 2018–2022.</p>
 <div class="cell">
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Florida Counties with the Highest Hispanic Population Share</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">County</th>
-<th style="text-align: right;">Total Population</th>
-<th style="text-align: right;">Hispanic Population</th>
-<th style="text-align: right;">Hispanic Share</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Miami-Dade</td>
-<td style="text-align: right;">2,688,237</td>
-<td style="text-align: right;">1,848,739</td>
-<td style="text-align: right;">68.8%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Hendry</td>
-<td style="text-align: right;">39,902</td>
-<td style="text-align: right;">22,789</td>
-<td style="text-align: right;">57.1%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Osceola</td>
-<td style="text-align: right;">393,745</td>
-<td style="text-align: right;">220,780</td>
-<td style="text-align: right;">56.1%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Hardee</td>
-<td style="text-align: right;">25,528</td>
-<td style="text-align: right;">11,310</td>
-<td style="text-align: right;">44.3%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Orange</td>
-<td style="text-align: right;">1,427,403</td>
-<td style="text-align: right;">469,883</td>
-<td style="text-align: right;">32.9%</td>
-</tr>
-</tbody>
-</table>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b66d078030533e53645f" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b66d078030533e53645f">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"7704\" data-max=\"39356104\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"590\" data-max=\"15617930\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0.018355050594907\" data-max=\"0.687714290071895\" data-scale=\"15\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"37221\" data-max=\"100020\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","caption":"<caption>Florida Counties and U.S. States: 2018–2022 ACS Estimates<\/caption>","data":[["Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","Florida county","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state","U.S. state"],["Alachua","Baker","Bay","Bradford","Brevard","Broward","Calhoun","Charlotte","Citrus","Clay","Collier","Columbia","DeSoto","Dixie","Duval","Escambia","Flagler","Franklin","Gadsden","Gilchrist","Glades","Gulf","Hamilton","Hardee","Hendry","Hernando","Highlands","Hillsborough","Holmes","Indian River","Jackson","Jefferson","Lafayette","Lake","Lee","Leon","Levy","Liberty","Madison","Manatee","Marion","Martin","Miami-Dade","Monroe","Nassau","Okaloosa","Okeechobee","Orange","Osceola","Palm Beach","Pasco","Pinellas","Polk","Putnam","Santa Rosa","Sarasota","Seminole","St. Johns","St. Lucie","Sumter","Suwannee","Taylor","Union","Volusia","Wakulla","Walton","Washington","Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],["Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","Florida","AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],[279729,27969,181055,27816,610723,1940907,13753,189900,155173,219650,380221,69832,34258,16737,995708,321296,117515,12276,43746,18070,12179,15002,13492,25528,39902,196621,102339,1468560,19529,160986,47704,14458,8107,386829,772902,294128,43268,7704,17986,405069,378225,159399,2688237,82044,91538,212021,39870,1427403,393745,1494805,569211,959918,736229,73604,188994,439392,471321,278722,334682,131832,43881,21421,15524,558520,33732,76618,25014,5028092,734821,7172282,3018669,39356104,5770790,3611317,993635,21634529,10722325,1450589,1854109,12757634,6784403,3188836,2935922,4502935,4640546,1366949,6161707,6984205,10057921,5695292,2958846,6154422,1091840,1958939,3104817,1379610,9249063,2112463,19994379,10470214,776874,11774683,3970497,4229374,12989208,1094250,5142750,890342,6923772,29243342,3283809,643816,8624511,7688549,1792967,5882128,577929],[30387,883,12980,1315,69355,610462,874,15266,9981,23711,108822,4730,10979,751,109800,19636,13212,674,4874,1125,2700,590,1445,11310,22789,30693,22050,439450,631,21240,2457,646,1082,67297,178802,20385,3992,603,1139,68333,56818,22778,1848739,21068,4579,21317,10661,469883,220780,350700,99192,99956,192804,7727,11652,43353,108146,22235,69088,8062,4547,888,889,87375,1438,5067,1090,232407,54890,2297513,243321,15617930,1273762,627408,98696,5738283,1078457,159023,242236,2275704,510984,208637,369970,180481,255584,25898,672905,879296,550427,327049,97123,280078,45881,230769,918509,58654,1963423,1051626,3895714,1051008,33189,494625,458686,583066,1055108,183196,318875,39197,412622,11665280,480843,13793,865015,1037153,32910,430976,60518],[0.1086301384554337,0.03157066752475955,0.0716909226478142,0.04727494966925511,0.1135621222714717,0.3145240859041675,0.06354977095906347,0.08038967877830437,0.06432175700669575,0.1079490097882996,0.2862072321097467,0.06773399014778325,0.3204798879093934,0.04487064587440999,0.110273292973442,0.06111498431353021,0.1124282006552355,0.05490387748452265,0.1114159008823664,0.06225788599889319,0.2216930782494458,0.03932808958805493,0.1071005040023718,0.443042933249765,0.5711242544233371,0.1561023491895576,0.2154603816726761,0.2992387100288718,0.03231092221823954,0.1319369386157803,0.05150511487506289,0.04468114538663717,0.1334649068706056,0.1739709277225854,0.2313385138089952,0.0693065604090736,0.09226217990200611,0.07827102803738317,0.06332703213610585,0.1686947162088434,0.1502227510079979,0.1428992653655293,0.6877142900718947,0.2567890400273024,0.05002294129214097,0.1005419274505827,0.2673940305994482,0.3291873423272895,0.5607182313426202,0.2346125414351705,0.1742622682976963,0.1041297277475784,0.2618804746892611,0.1049807075702407,0.06165275088098035,0.09866588376665937,0.2294529630549032,0.07977482939990385,0.2064287891192236,0.06115358941683355,0.103621157220665,0.04145464730871574,0.05726616851326978,0.1564402349065387,0.04263014348393217,0.06613328460675037,0.04357559766530743,0.0462217079560199,0.07469846397966308,0.3203322178352719,0.08060539264159138,0.3968362823718527,0.2207257585183311,0.1737338483439698,0.09932822414669371,0.2652372510628727,0.1005805177515138,0.109626503441016,0.1306481981372185,0.1783797842139067,0.07531745976764646,0.06542732206987126,0.1260149281895091,0.04008074733479386,0.05507627766215441,0.01894584216382615,0.1092075621252357,0.1258977936644185,0.05472572313900656,0.05742444812311643,0.03282462149094613,0.04550841654992135,0.04202172479484174,0.1178030556336874,0.2958335386594443,0.04251491363501279,0.2122834496856601,0.4978198434718146,0.1948404599112581,0.1003807563054585,0.0427212134786336,0.04200750032930823,0.1155235729935069,0.1378610640723663,0.08122958690014048,0.1674169522503998,0.06200476398813864,0.04402465569410406,0.05959497222034463,0.3989037915023529,0.1464284311298251,0.02142382295562707,0.1002972806226347,0.1348958041367753,0.01835505059490777,0.07326872179592148,0.104715285095574],[57566,67872,65999,54759,71308,70331,41526,62164,52569,82242,82011,53501,45000,45057,65579,61642,69251,58107,45721,56823,37221,56250,47668,44665,49259,59202,53679,70612,46063,67543,46144,51573,57852,66239,69368,61317,49933,51723,43386,71385,55265,77894,64215,80111,84085,73988,50476,72629,64312,76066,63187,66406,60901,44852,84715,77213,79490,100020,66154,70105,49729,46239,64043,63075,72035,74832,47536,59609,86370,72581,56335,91905,87598,90213,79325,67917,71355,94814,70214,78433,67173,70571,69747,60183,57852,68251,98461,96505,68505,84313,52985,65920,66341,71722,71646,90845,97126,58722,81386,66186,73959,66990,61364,76632,73170,81370,63623,69457,64035,73035,86833,74014,87249,90325,55217,72458,72495]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Geography<\/th>\n      <th>Name<\/th>\n      <th>State<\/th>\n      <th>Population<\/th>\n      <th>Hispanic population<\/th>\n      <th>Hispanic population (%)<\/th>\n      <th>Median household income<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":25,"scrollX":true,"autoWidth":true,"columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatCurrency(data, \"$\", 0, 3, \",\", \".\", true, null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatPercentage(data, 1, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 0, 3, \",\", \".\", null);\n  }"},{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 0, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[3,4,5,6]},{"name":"Geography","targets":0},{"name":"Name","targets":1},{"name":"State","targets":2},{"name":"Population","targets":3},{"name":"Hispanic population","targets":4},{"name":"Hispanic population (%)","targets":5},{"name":"Median household income","targets":6}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":["options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render"],"jsHooks":[]}</script>
 </div>
 </div>
-<hr>
-</section>
-</section>
-<section id="national-demographics-3100-u.s.-counties-across-regions" class="level2">
-<h2 class="anchored" data-anchor-id="national-demographics-3100-u.s.-counties-across-regions">National Demographics: 3,100+ U.S. Counties across Regions</h2>
-<section id="nationwide-comparison-income-vs.-hispanic-share" class="level3">
-<h3 class="anchored" data-anchor-id="nationwide-comparison-income-vs.-hispanic-share">Nationwide Comparison: Income vs.&nbsp;Hispanic Share</h3>
-<p>To contextualize Florida’s demographics within the broader American landscape, the high-density plot below analyzes over 3,100 U.S. counties. The data are faceted into the four official U.S. Census Regions—<strong>Midwest</strong>, <strong>Northeast</strong>, <strong>South</strong>, and <strong>West</strong>—revealing distinct regional economic and demographic alignments.</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="index_files/figure-html/us-counties-scatter-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1056"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="regional-demographic-breakdown" class="level3">
-<h3 class="anchored" data-anchor-id="regional-demographic-breakdown">Regional Demographic Breakdown</h3>
-<p>The table below summarizes median household income, aggregate population, and average Hispanic population shares across the four U.S. regions:</p>
-<div class="cell">
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>Demographic Overview Across U.S. Census Regions (2018–2022 ACS)</caption>
-<colgroup>
-<col style="width: 12%">
-<col style="width: 18%">
-<col style="width: 17%">
-<col style="width: 24%">
-<col style="width: 26%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">U.S. Region</th>
-<th style="text-align: right;">Counties Analyzed</th>
-<th style="text-align: right;">Total Population</th>
-<th style="text-align: right;">Weighted Median Income</th>
-<th style="text-align: right;">Aggregate Hispanic Share</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Midwest</td>
-<td style="text-align: right;">1,055</td>
-<td style="text-align: right;">68,857,396</td>
-<td style="text-align: right;">$73,158.11</td>
-<td style="text-align: right;">8.4%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Northeast</td>
-<td style="text-align: right;">218</td>
-<td style="text-align: right;">57,312,797</td>
-<td style="text-align: right;">$87,085.67</td>
-<td style="text-align: right;">15.2%</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">South</td>
-<td style="text-align: right;">1,421</td>
-<td style="text-align: right;">126,499,828</td>
-<td style="text-align: right;">$71,822.72</td>
-<td style="text-align: right;">18.6%</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">West</td>
-<td style="text-align: right;">449</td>
-<td style="text-align: right;">78,427,476</td>
-<td style="text-align: right;">$88,085.48</td>
-<td style="text-align: right;">30.4%</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-</section>
-<section id="comparative-demographic-insights" class="level2">
-<h2 class="anchored" data-anchor-id="comparative-demographic-insights">Comparative Demographic Insights</h2>
-<ol type="1">
-<li><p><strong>State vs.&nbsp;National Dynamics:</strong> Across the 3,144 U.S. counties, the West and South exhibit the highest concentrations of Hispanic residents, but their underlying relationships with income differ substantially. In the West, Hispanic populations are distributed broadly across both agricultural communities and affluent coastal counties. In the South, Florida functions as an exceptional demographic anchor where high Hispanic shares span the entire economic spectrum—from agricultural hubs in Hendry and Hardee counties to major metropolitan centers in Miami-Dade, Broward, and Orange counties.</p></li>
-<li><p><strong>Neighborhood-Scale Nuance in Florida:</strong> While county aggregates provide an essential high-level overview, analyzing 5,160 individual Florida tracts reveals tremendous internal heterogeneity. Many tracts in Miami-Dade and Osceola exceed 80% Hispanic concentration while spanning household incomes from under $25,000 to over $150,000. The non-linear cyan loess trend illustrates that Hispanic representation in Florida is not confined to low-income census tracts, reflecting the robust, multi-generational economic diversity of the state’s Hispanic populace.</p></li>
-<li><p><strong>Regional Continental Divergence:</strong> In the Midwest and Northeast, the vast majority of counties report Hispanic shares below 10%, with elevated percentages tightly focused in specific urbanized manufacturing or transportation hubs. By contrast, Southern and Western counties exhibit substantial geographic clustering shaped by historic borders, migration channels, and expanding regional economic centers.</p></li>
-</ol>
 
 
 </section>

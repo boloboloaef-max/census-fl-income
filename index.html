@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Hispanic Population Distribution Across Florida Counties – Florida Census Demographics</title>
+<title>Census Demographics: Florida &amp; National County Analysis – Florida Census Demographics</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -119,8 +119,18 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#top-5-counties-by-hispanic-share" id="toc-top-5-counties-by-hispanic-share" class="nav-link active" data-scroll-target="#top-5-counties-by-hispanic-share">Top 5 Counties by Hispanic Share</a></li>
-  <li><a href="#spatial-analysis" id="toc-spatial-analysis" class="nav-link" data-scroll-target="#spatial-analysis">Spatial Analysis</a></li>
+  <li><a href="#florida-demographics-county-neighborhood-patterns" id="toc-florida-demographics-county-neighborhood-patterns" class="nav-link active" data-scroll-target="#florida-demographics-county-neighborhood-patterns">Florida Demographics: County &amp; Neighborhood Patterns</a>
+  <ul class="collapse">
+  <li><a href="#county-level-distribution-of-hispanic-population" id="toc-county-level-distribution-of-hispanic-population" class="nav-link" data-scroll-target="#county-level-distribution-of-hispanic-population">County-Level Distribution of Hispanic Population</a></li>
+  <li><a href="#florida-tract-level-microdata-5100-census-tracts" id="toc-florida-tract-level-microdata-5100-census-tracts" class="nav-link" data-scroll-target="#florida-tract-level-microdata-5100-census-tracts">Florida Tract-Level Microdata (5,100+ Census Tracts)</a></li>
+  <li><a href="#top-5-florida-counties-by-hispanic-share" id="toc-top-5-florida-counties-by-hispanic-share" class="nav-link" data-scroll-target="#top-5-florida-counties-by-hispanic-share">Top 5 Florida Counties by Hispanic Share</a></li>
+  </ul></li>
+  <li><a href="#national-demographics-3100-u.s.-counties-across-regions" id="toc-national-demographics-3100-u.s.-counties-across-regions" class="nav-link" data-scroll-target="#national-demographics-3100-u.s.-counties-across-regions">National Demographics: 3,100+ U.S. Counties across Regions</a>
+  <ul class="collapse">
+  <li><a href="#nationwide-comparison-income-vs.-hispanic-share" id="toc-nationwide-comparison-income-vs.-hispanic-share" class="nav-link" data-scroll-target="#nationwide-comparison-income-vs.-hispanic-share">Nationwide Comparison: Income vs.&nbsp;Hispanic Share</a></li>
+  <li><a href="#regional-demographic-breakdown" id="toc-regional-demographic-breakdown" class="nav-link" data-scroll-target="#regional-demographic-breakdown">Regional Demographic Breakdown</a></li>
+  </ul></li>
+  <li><a href="#comparative-demographic-insights" id="toc-comparative-demographic-insights" class="nav-link" data-scroll-target="#comparative-demographic-insights">Comparative Demographic Insights</a></li>
   </ul>
 </nav>
     </div>
@@ -129,7 +139,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Hispanic Population Distribution Across Florida Counties</h1>
+<h1 class="title">Census Demographics: Florida &amp; National County Analysis</h1>
+<p class="subtitle lead">Analyzing 5,100+ FL Tracts &amp; 3,100+ US Counties (2018–2022 ACS)</p>
 </div>
 
 
@@ -146,18 +157,50 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Milestone #5 Dataset Scale: Analyzing 5,100+ FL Tracts &amp; 3,100+ US Counties
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This study leverages massive demographic datasets from the U.S. Census Bureau’s 2018–2022 American Community Survey (ACS) 5-Year Estimates across two geographic tiers: - <strong>Florida Census Tracts:</strong> High-density neighborhood resolution across <strong>5,160</strong> tracts in all 67 Florida counties. - <strong>United States National Counties:</strong> Nationwide comparative scale analyzing <strong>3,222</strong> counties across all 50 states, the District of Columbia, and Puerto Rico.</p>
+</div>
+</div>
+<section id="florida-demographics-county-neighborhood-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="florida-demographics-county-neighborhood-patterns">Florida Demographics: County &amp; Neighborhood Patterns</h2>
+<section id="county-level-distribution-of-hispanic-population" class="level3">
+<h3 class="anchored" data-anchor-id="county-level-distribution-of-hispanic-population">County-Level Distribution of Hispanic Population</h3>
+<p>The choropleth map below displays the geographic concentration of Hispanic and Latino residents across all 67 Florida counties.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/florida-choropleth-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768"></p>
+<p><img src="index_files/figure-html/florida-choropleth-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="816"></p>
 </figure>
 </div>
 </div>
 </div>
-<section id="top-5-counties-by-hispanic-share" class="level2">
-<h2 class="anchored" data-anchor-id="top-5-counties-by-hispanic-share">Top 5 Counties by Hispanic Share</h2>
-<p>The table below highlights the five counties with the largest proportion of Hispanic residents in Florida:</p>
+</section>
+<section id="florida-tract-level-microdata-5100-census-tracts" class="level3">
+<h3 class="anchored" data-anchor-id="florida-tract-level-microdata-5100-census-tracts">Florida Tract-Level Microdata (5,100+ Census Tracts)</h3>
+<p>Moving beyond county aggregates, the high-density scatter plot below plots over 5,000 individual Florida census tracts. Each point represents a neighborhood census tract, with point sizes scaled to total population, points colored by county, and a smoothed cyan trend line highlighting the non-linear relationship between median household income and Hispanic population share.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/florida-tract-scatter-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="top-5-florida-counties-by-hispanic-share" class="level3">
+<h3 class="anchored" data-anchor-id="top-5-florida-counties-by-hispanic-share">Top 5 Florida Counties by Hispanic Share</h3>
+<p>The summary table below highlights the five Florida counties with the largest proportion of Hispanic residents:</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -205,10 +248,89 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </div>
 </div>
+<hr>
 </section>
-<section id="spatial-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="spatial-analysis">Spatial Analysis</h2>
-<p>The choropleth map reveals a pronounced geographic concentration of Florida’s Hispanic population, primarily clustered in South Florida and the Central Florida I-4 corridor. In South Florida, Miami-Dade County exhibits the highest Hispanic proportion in the state at 68.8%, reflecting historic and continuing immigration from Cuba and across Latin America, while agricultural interior counties like Hendry (57.1%) also sustain majority-Hispanic populations. Central Florida forms a prominent secondary hub centered on Osceola County (56.1%) and Orange County (32.9%), fueled by substantial inward migration of Puerto Rican communities to the Greater Orlando area. In contrast, northern Florida and the Panhandle exhibit significantly lower Hispanic population shares (often below 5%), highlighting a stark regional divergence across the peninsula.</p>
+</section>
+<section id="national-demographics-3100-u.s.-counties-across-regions" class="level2">
+<h2 class="anchored" data-anchor-id="national-demographics-3100-u.s.-counties-across-regions">National Demographics: 3,100+ U.S. Counties across Regions</h2>
+<section id="nationwide-comparison-income-vs.-hispanic-share" class="level3">
+<h3 class="anchored" data-anchor-id="nationwide-comparison-income-vs.-hispanic-share">Nationwide Comparison: Income vs.&nbsp;Hispanic Share</h3>
+<p>To contextualize Florida’s demographics within the broader American landscape, the high-density plot below analyzes over 3,100 U.S. counties. The data are faceted into the four official U.S. Census Regions—<strong>Midwest</strong>, <strong>Northeast</strong>, <strong>South</strong>, and <strong>West</strong>—revealing distinct regional economic and demographic alignments.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/us-counties-scatter-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1056"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="regional-demographic-breakdown" class="level3">
+<h3 class="anchored" data-anchor-id="regional-demographic-breakdown">Regional Demographic Breakdown</h3>
+<p>The table below summarizes median household income, aggregate population, and average Hispanic population shares across the four U.S. regions:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Demographic Overview Across U.S. Census Regions (2018–2022 ACS)</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 18%">
+<col style="width: 17%">
+<col style="width: 24%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">U.S. Region</th>
+<th style="text-align: right;">Counties Analyzed</th>
+<th style="text-align: right;">Total Population</th>
+<th style="text-align: right;">Weighted Median Income</th>
+<th style="text-align: right;">Aggregate Hispanic Share</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Midwest</td>
+<td style="text-align: right;">1,055</td>
+<td style="text-align: right;">68,857,396</td>
+<td style="text-align: right;">$73,158.11</td>
+<td style="text-align: right;">8.4%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Northeast</td>
+<td style="text-align: right;">218</td>
+<td style="text-align: right;">57,312,797</td>
+<td style="text-align: right;">$87,085.67</td>
+<td style="text-align: right;">15.2%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">South</td>
+<td style="text-align: right;">1,421</td>
+<td style="text-align: right;">126,499,828</td>
+<td style="text-align: right;">$71,822.72</td>
+<td style="text-align: right;">18.6%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West</td>
+<td style="text-align: right;">449</td>
+<td style="text-align: right;">78,427,476</td>
+<td style="text-align: right;">$88,085.48</td>
+<td style="text-align: right;">30.4%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="comparative-demographic-insights" class="level2">
+<h2 class="anchored" data-anchor-id="comparative-demographic-insights">Comparative Demographic Insights</h2>
+<ol type="1">
+<li><p><strong>State vs.&nbsp;National Dynamics:</strong> Across the 3,144 U.S. counties, the West and South exhibit the highest concentrations of Hispanic residents, but their underlying relationships with income differ substantially. In the West, Hispanic populations are distributed broadly across both agricultural communities and affluent coastal counties. In the South, Florida functions as an exceptional demographic anchor where high Hispanic shares span the entire economic spectrum—from agricultural hubs in Hendry and Hardee counties to major metropolitan centers in Miami-Dade, Broward, and Orange counties.</p></li>
+<li><p><strong>Neighborhood-Scale Nuance in Florida:</strong> While county aggregates provide an essential high-level overview, analyzing 5,160 individual Florida tracts reveals tremendous internal heterogeneity. Many tracts in Miami-Dade and Osceola exceed 80% Hispanic concentration while spanning household incomes from under $25,000 to over $150,000. The non-linear cyan loess trend illustrates that Hispanic representation in Florida is not confined to low-income census tracts, reflecting the robust, multi-generational economic diversity of the state’s Hispanic populace.</p></li>
+<li><p><strong>Regional Continental Divergence:</strong> In the Midwest and Northeast, the vast majority of counties report Hispanic shares below 10%, with elevated percentages tightly focused in specific urbanized manufacturing or transportation hubs. By contrast, Southern and Western counties exhibit substantial geographic clustering shaped by historic borders, migration channels, and expanding regional economic centers.</p></li>
+</ol>
 
 
 </section>
